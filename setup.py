@@ -7,7 +7,7 @@ def get_requirements(file_path: str) -> list[str]:
     """
     This function will return the list of requirements
     """
-
+   
     requirements = []
 
     with open(file_path) as file_obj:
