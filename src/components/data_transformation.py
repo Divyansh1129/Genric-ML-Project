@@ -1,9 +1,9 @@
-import sys
 import os
+import sys
 from dataclasses import dataclass
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -16,7 +16,9 @@ from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path = os.path.join("artifacts", "preprocessor.pkl")
+    preprocessor_obj_file_path = os.path.join(
+        "artifacts", "preprocessor.pkl"
+    )
 
 
 class DataTransformation:
@@ -60,7 +62,7 @@ class DataTransformation:
             logging.info("Categorical columns encoding completed.")
 
             preprocessor = ColumnTransformer(
-                [
+                transformers=[
                     ("num_pipeline", num_pipeline, numerical_columns),
                     ("cat_pipeline", categorical_pipeline, categorical_columns)
                 ]
@@ -79,26 +81,25 @@ class DataTransformation:
 
             logging.info("Read train and test data completed.")
 
+            target_column_name = "math_score"
+
             logging.info("Obtaining preprocessing object.")
 
             preprocessing_obj = self.get_data_transformer_object()
 
-            target_column_name = "math_score"
-
-            # Training Data
+            # Input and Target Features
             input_feature_train_df = train_df.drop(
-                columns=[target_column_name], axis=1
+                columns=[target_column_name]
             )
             target_feature_train_df = train_df[target_column_name]
 
-            # Testing Data
             input_feature_test_df = test_df.drop(
-                columns=[target_column_name], axis=1
+                columns=[target_column_name]
             )
             target_feature_test_df = test_df[target_column_name]
 
             logging.info(
-                "Applying preprocessing object on training and testing dataframes."
+                "Applying preprocessing object on training and testing datasets."
             )
 
             input_feature_train_arr = preprocessing_obj.fit_transform(
@@ -126,7 +127,7 @@ class DataTransformation:
                 obj=preprocessing_obj
             )
 
-            logging.info("Preprocessing object saved successfully.")
+            logging.info("Preprocessor object saved successfully.")
 
             return (
                 train_arr,
@@ -136,3 +137,15 @@ class DataTransformation:
 
         except Exception as e:
             raise CustomException(e, sys)
+
+
+if __name__ == "__main__":
+    obj = DataTransformation()
+    train_arr, test_arr, preprocessor_path = obj.initiate_data_transformation(
+        "artifacts/train.csv",
+        "artifacts/test.csv"
+    )
+
+    print("Train shape:", train_arr.shape)
+    print("Test shape:", test_arr.shape)
+    print("Preprocessor saved at:", preprocessor_path)
