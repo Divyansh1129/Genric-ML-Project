@@ -106,4 +106,6 @@ class ModelTrainer:
 
         except Exception as e:
             raise CustomException(e, sys)
-        ##adding further changes to test the pipeline
+        ##adding further changes to test the pipeline 
+        
+        ##pipeline testing
